@@ -36,6 +36,7 @@ public sealed class PluginBrandIcon : UserControl
     {
         var brand = PluginId switch
         {
+            "com.typewhisper.assemblyai" => "assemblyai",
             "com.typewhisper.deepgram" => "deepgram",
             "com.typewhisper.elevenlabs" => "elevenlabs",
             "com.typewhisper.groq" => "groq",
@@ -49,6 +50,7 @@ public sealed class PluginBrandIcon : UserControl
         var light = ActualTheme == ElementTheme.Light;
         var file = brand switch
         {
+            "assemblyai" => light ? "assemblyai-light" : "assemblyai-dark",
             "openai" => light ? "openai-light" : "openai-dark",
             "github-copilot" => light ? "github-copilot-light" : "github-copilot-dark",
             "openrouter" => light ? "openrouter-light" : "openrouter-dark",
