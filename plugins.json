@@ -233,18 +233,20 @@
   {
     "id": "com.typewhisper.claude",
     "name": "Claude",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "minHostVersion": "1.0.9",
     "author": "TypeWhisper",
     "description": "Anthropic Claude LLM for prompt processing",
     "category": "llm",
     "requiresApiKey": true,
-    "size": 10988,
-    "downloadUrl": "https://typewhisper.github.io/typewhisper-win/plugins/com.typewhisper.claude-1.0.1.zip",
+    "size": 10996,
+    "downloadUrl": "https://typewhisper.github.io/typewhisper-win/plugins/com.typewhisper.claude-1.0.2.zip",
     "categories": [
       "llm"
     ],
-    "sha256": "32236abc158173df91bd9f514b8a0844c754b715ddc42f765f6d1397c21b66ed"
+    "sha256": "d011bbe0c0415d37d85be24a1a4f477c947145c11833f65870c72cab94a05e6a",
+    "iconSystemName": null,
+    "descriptions": null
   },
   {
     "id": "com.typewhisper.openrouter",
