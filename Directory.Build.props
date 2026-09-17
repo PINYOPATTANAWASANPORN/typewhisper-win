@@ -7,6 +7,14 @@
     <Copyright>Copyright © 2026 TypeWhisper</Copyright>
   </PropertyGroup>
 
+  <!-- Centralized target framework and output directory for the Windows application host.
+       Ensures locally built plugins deploy into the actual runtime directory instead of
+       falling back to the plugin's own TargetFramework. (#426) -->
+  <PropertyGroup>
+    <TypeWhisperAppTargetFramework Condition="'$(TypeWhisperAppTargetFramework)' == ''">net10.0-windows10.0.19041.0</TypeWhisperAppTargetFramework>
+    <TypeWhisperAppOutputDir Condition="'$(TypeWhisperAppOutputDir)' == '' and '$(MSBuildProjectDirectory)' != ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)src\TypeWhisper.Windows\bin\$(Configuration)\$(TypeWhisperAppTargetFramework)'))</TypeWhisperAppOutputDir>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(MSBuildProjectName)' != 'TypeWhisper.Core.Tests' and '$(MSBuildProjectName)' != 'TypeWhisper.PluginSystem.Tests'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>$(WarningsAsErrors);CS1591;CS1572;CS1573;CS1574;CS1581;CS1584</WarningsAsErrors>
