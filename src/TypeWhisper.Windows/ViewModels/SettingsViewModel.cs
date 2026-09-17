@@ -1141,7 +1141,8 @@ public partial class SettingsViewModel : ObservableObject
         new("cs", "Čeština"),
         new("sv", "Svenska"),
         new("da", "Dansk"),
-        new("fi", "Suomi")
+        new("fi", "Suomi"),
+        new("ko", "한국어")
     ];
 
     private static IReadOnlyList<GermanOutputVariantOption> BuildGermanOutputVariantOptions() =>

@@ -23,6 +23,7 @@ public sealed class AudioSectionLanguageTests
         Assert.Contains("Settings.AvailableLanguageHints", xaml);
         Assert.Contains("Settings.SelectedLanguageHints", xaml);
         Assert.Contains("new(\"zh\", \"中文\")", viewModel);
+        Assert.Contains("new(\"ko\", \"한국어\")", viewModel);
         Assert.Contains("DictationEnglishOutputVariant", xaml);
         Assert.Contains("Settings.EnglishOutputVariantOptions", xaml);
         Assert.Contains("Settings.HasSelectedEnglishLanguage", xaml);
