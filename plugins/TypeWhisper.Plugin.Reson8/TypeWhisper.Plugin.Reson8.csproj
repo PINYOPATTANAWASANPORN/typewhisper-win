@@ -26,7 +26,7 @@
   </Target>
   <Target Name="CopyToAppPlugins" AfterTargets="Build">
     <PropertyGroup>
-      <AppOutputDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\src\TypeWhisper.Windows\bin\$(Configuration)\$(TargetFramework)'))</AppOutputDir>
+      <AppOutputDir>$(TypeWhisperAppOutputDir)</AppOutputDir>
       <PluginOutputDir>$(AppOutputDir)\Plugins\com.typewhisper.reson8\</PluginOutputDir>
     </PropertyGroup>
     <MakeDir Directories="$(PluginOutputDir)" />
