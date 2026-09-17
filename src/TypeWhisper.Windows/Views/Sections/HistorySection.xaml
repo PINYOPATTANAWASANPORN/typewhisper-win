@@ -408,15 +408,15 @@
                                     <!-- Action buttons -->
                                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0"
                                                 Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                                        <Button Content="{loc:Str History.Copy}" Command="{Binding CopyCommand}"
+                                                AutomationProperties.AutomationId="{Binding Record.Id, StringFormat=HistoryCopy.{0}}"
+                                                Style="{StaticResource LinkButtonStyle}" Margin="0,0,12,0"/>
                                         <Button Content="{loc:Str History.Edit}" Command="{Binding StartEditCommand}"
                                                 AutomationProperties.AutomationId="{Binding Record.Id, StringFormat=HistoryEdit.{0}}"
                                                 Style="{StaticResource LinkButtonStyle}" Margin="0,0,12,0"
                                                 Visibility="{Binding IsWorkflowFailed, Converter={StaticResource InverseBoolToVis}}"/>
                                         <Button Content="{loc:Str History.ReadBack}" Command="{Binding ReadBackCommand}"
                                                 AutomationProperties.AutomationId="{Binding Record.Id, StringFormat=HistoryReadBack.{0}}"
-                                                Style="{StaticResource LinkButtonStyle}" Margin="0,0,12,0"/>
-                                        <Button Content="{loc:Str History.Copy}" Command="{Binding CopyCommand}"
-                                                AutomationProperties.AutomationId="{Binding Record.Id, StringFormat=HistoryCopy.{0}}"
                                                 Style="{StaticResource LinkButtonStyle}" Margin="0,0,12,0"/>
                                         <Button Content="{loc:Str History.DeleteEntry}" Command="{Binding DeleteCommand}"
                                                 AutomationProperties.AutomationId="{Binding Record.Id, StringFormat=HistoryDelete.{0}}"
