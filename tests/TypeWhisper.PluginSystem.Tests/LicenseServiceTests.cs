@@ -791,6 +791,61 @@ public sealed class LicenseServiceTests : IDisposable
         return Assert.IsType<T>(property.GetValue(instance));
     }
 
+    [Fact]
+    public async Task PolarRequests_IncludeApiVersionHeader()
+    {
+        var recordedHeaders = new List<string?>();
+        var service = CreateService((request, _) =>
+        {
+            if (request.Headers.TryGetValues("Polar-Version", out var values))
+            {
+                recordedHeaders.AddRange(values);
+            }
+
+            return request.RequestUri?.AbsolutePath switch
+            {
+                "/v1/customer-portal/license-keys/activate" => Json(HttpStatusCode.OK, """{"id":"activation-ver-123"}"""),
+                "/v1/customer-portal/license-keys/validate" => Json(HttpStatusCode.OK, """{"id":"activation-ver-123","status":"granted","benefit_id":"40b82917-f74e-4cc3-8165-937f1f47b294"}"""),
+                "/v1/customer-portal/license-keys/deactivate" => new HttpResponseMessage(HttpStatusCode.NoContent),
+                _ => Json(HttpStatusCode.InternalServerError, """{"detail":"unexpected"}"""),
+            };
+        });
+
+        var entitlement = await service.ActivateCommercialLicenseAsync("TYPEWHISPER-VER-TEST");
+        Assert.Equal(CommercialLicenseTier.Enterprise, entitlement);
+        Assert.Equal(LicenseStatus.Active, service.CommercialStatus);
+
+        await service.ValidateCommercialLicenseAsync();
+        Assert.Equal(LicenseStatus.Active, service.CommercialStatus);
+
+        await service.DeactivateCommercialLicenseAsync();
+        Assert.Equal(LicenseStatus.Unlicensed, service.CommercialStatus);
+
+        Assert.NotEmpty(recordedHeaders);
+        Assert.All(recordedHeaders, header => Assert.Equal(LicenseService.PolarApiVersion, header));
+    }
+
+    [Fact]
+    public async Task SupporterValidation_PreservesLocalStateWhen404IsVersionOrCompatibilityError()
+    {
+        var service = CreateService((request, _) =>
+        {
+            Assert.True(request.Headers.Contains("Polar-Version"));
+            return Json(HttpStatusCode.NotFound, """{"error":"VersionNotSupported","detail":"API version deprecated or invalid"}""");
+        });
+
+        SetPrivateField(service, "_supporterLicenseKey", "TYPEWHISPER-SUP-VER");
+        SetPrivateField(service, "_supporterActivationId", "activation-supporter-123");
+        service.SupporterStatus = LicenseStatus.Active;
+        service.SupporterTier = SupporterTier.Gold;
+
+        await service.ValidateSupporterLicenseAsync();
+
+        // Must preserve local state and NOT wipe to Unlicensed
+        Assert.Equal(LicenseStatus.Active, service.SupporterStatus);
+        Assert.Equal(SupporterTier.Gold, service.SupporterTier);
+    }
+
     private sealed class CapturingHandler(Func<HttpRequestMessage, string, HttpResponseMessage> responder) : HttpMessageHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

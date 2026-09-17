@@ -26,6 +26,7 @@ namespace TypeWhisper.Windows.Services;
 public sealed partial class LicenseService : ObservableObject
 {
     private const string BaseUrl = "https://api.polar.sh/v1/customer-portal/license-keys";
+    public const string PolarApiVersion = "2026-04";
     private const string OrganizationId = "96de503c-3c8b-4d08-9ded-c7f6e20fdde4";
     private const string CredentialStoreFileName = "licenses.dat";
     private const string LegacyCredentialFileName = "license.json";
@@ -886,7 +887,12 @@ public sealed partial class LicenseService : ObservableObject
                 distribution = _distributionKind == AppDistributionKind.Store ? "store" : "direct"
             }
         };
-        var response = await _http.PostAsJsonAsync($"{BaseUrl}/activate", body, ct);
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/activate")
+        {
+            Content = JsonContent.Create(body)
+        };
+        request.Headers.Add("Polar-Version", PolarApiVersion);
+        var response = await _http.SendAsync(request, ct);
         var json = await response.Content.ReadAsStringAsync(ct);
 
         if (!response.IsSuccessStatusCode)
@@ -899,7 +905,12 @@ public sealed partial class LicenseService : ObservableObject
     private async Task<PolarValidationResponse> ValidateCoreAsync(string key, string activationId, CancellationToken ct)
     {
         var body = new { key, organization_id = OrganizationId, activation_id = activationId };
-        var response = await _http.PostAsJsonAsync($"{BaseUrl}/validate", body, ct);
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/validate")
+        {
+            Content = JsonContent.Create(body)
+        };
+        request.Headers.Add("Polar-Version", PolarApiVersion);
+        var response = await _http.SendAsync(request, ct);
         var json = await response.Content.ReadAsStringAsync(ct);
 
         if (!response.IsSuccessStatusCode)
@@ -920,7 +931,12 @@ public sealed partial class LicenseService : ObservableObject
     private async Task DeactivateCoreAsync(string key, string activationId, CancellationToken ct)
     {
         var body = new { key, organization_id = OrganizationId, activation_id = activationId };
-        var response = await _http.PostAsJsonAsync($"{BaseUrl}/deactivate", body, ct);
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/deactivate")
+        {
+            Content = JsonContent.Create(body)
+        };
+        request.Headers.Add("Polar-Version", PolarApiVersion);
+        var response = await _http.SendAsync(request, ct);
         var json = await response.Content.ReadAsStringAsync(ct);
 
         if (!response.IsSuccessStatusCode)
@@ -1026,10 +1042,13 @@ public sealed partial class LicenseService : ObservableObject
         {
             var error = JsonSerializer.Deserialize<PolarErrorResponse>(json);
             if (!string.IsNullOrWhiteSpace(error?.Detail))
-                return new PolarApiException(error.Detail, statusCode, error.Detail, error.Type);
+                return new PolarApiException(error.Detail, statusCode, error.Detail, error.Type ?? error.Error);
 
             if (!string.IsNullOrWhiteSpace(error?.Type))
                 return new PolarApiException(error.Type, statusCode, null, error.Type);
+
+            if (!string.IsNullOrWhiteSpace(error?.Error))
+                return new PolarApiException(error.Error, statusCode, null, error.Error);
         }
         catch
         {
@@ -1041,8 +1060,16 @@ public sealed partial class LicenseService : ObservableObject
 
     private static bool IsPolarResourceMissing(Exception ex)
     {
-        if (ex is PolarApiException { StatusCode: 404 })
+        if (ex is PolarApiException { StatusCode: 404 } polar404)
+        {
+            if (IsApiVersionOrCompatibilityError(polar404.Detail) ||
+                IsApiVersionOrCompatibilityError(polar404.Type) ||
+                IsApiVersionOrCompatibilityError(polar404.Message))
+            {
+                return false;
+            }
             return true;
+        }
 
         if (ex is PolarApiException polar &&
             (ContainsResourceMissingSignal(polar.Detail) || ContainsResourceMissingSignal(polar.Type)))
@@ -1052,6 +1079,10 @@ public sealed partial class LicenseService : ObservableObject
 
         return ContainsResourceMissingSignal(ex.Message);
     }
+
+    private static bool IsApiVersionOrCompatibilityError(string? value) =>
+        value?.Contains("version", StringComparison.OrdinalIgnoreCase) == true ||
+        value?.Contains("polar-version", StringComparison.OrdinalIgnoreCase) == true;
 
     private static bool ContainsResourceMissingSignal(string? value) =>
         value?.Contains("not found", StringComparison.OrdinalIgnoreCase) == true ||
@@ -1383,6 +1414,7 @@ public sealed partial class LicenseService : ObservableObject
     {
         [JsonPropertyName("detail")] public string? Detail { get; init; }
         [JsonPropertyName("type")] public string? Type { get; init; }
+        [JsonPropertyName("error")] public string? Error { get; init; }
     }
 
     private enum ExpectedLicenseEntitlementKind
