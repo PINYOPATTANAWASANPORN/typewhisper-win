@@ -22,7 +22,7 @@
   </ItemGroup>
   <Target Name="CopyToAppPlugins" AfterTargets="Build">
     <PropertyGroup>
-      <AppOutputDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\src\TypeWhisper.Windows\bin\$(Configuration)\$(TargetFramework)'))</AppOutputDir>
+      <AppOutputDir>$(TypeWhisperAppOutputDir)</AppOutputDir>
       <PluginOutputDir>$(AppOutputDir)\Plugins\com.typewhisper.soniox\</PluginOutputDir>
     </PropertyGroup>
     <RemoveDir Directories="$(PluginOutputDir)" Condition="Exists('$(PluginOutputDir)')" />
