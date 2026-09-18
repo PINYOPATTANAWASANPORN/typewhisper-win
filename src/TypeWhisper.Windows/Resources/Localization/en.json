@@ -218,8 +218,7 @@
   "Feedback.LearnedCorrectionsFormat": "Learned {0} corrections",
   "Nav.Info": "Info",
   "Nav.About": "About",
-
-  "Settings.Title": "TypeWhisper \u2014 Settings",
+  "Settings.Title": "TypeWhisper — Settings",
   "Settings.WindowTitle": "Settings",
   "Settings.AutoSaveHint": "Settings are saved automatically.",
   "SettingsGroup.Overview": "Overview",
@@ -227,7 +226,6 @@
   "SettingsGroup.Library": "Library",
   "SettingsGroup.AI": "AI",
   "SettingsGroup.System": "System",
-
   "General.Title": "General",
   "General.HotkeyHybrid": "Hotkey (Hybrid)",
   "General.HotkeyHybridHint": "Short press = toggle, long hold = push-to-talk",
@@ -265,7 +263,6 @@
   "General.LocalApi": "Enable local API",
   "General.LocalApiHint": "Expose the local REST endpoint for integrations and automation.",
   "General.AutostartHint": "TypeWhisper starts automatically when you log in to Windows.",
-
   "Recording.Title": "Recording",
   "Recording.Microphone": "Microphone",
   "Recording.Refresh": "Refresh",
@@ -277,7 +274,6 @@
   "Recording.MediaPlayback": "Media Playback",
   "Recording.PausePlayback": "Pause playback during recording",
   "Recording.PausePlaybackHint": "Pauses running players (Spotify, YouTube, etc.)",
-
   "Models.Title": "Transcription Providers",
   "Models.Subtitle": "Local and cloud-based speech recognition",
   "Models.Transcription": "Transcription",
@@ -338,7 +334,6 @@
   "Models.RequirementUpdateFailedFormat": "Could not update the download requirement: {0}",
   "Models.RequiredDownloadRequirementFormat": "Complete the required download setting '{0}' before downloading this model.",
   "Models.PluginOperationBusyFormat": "{0} is already updating a local model. Wait for that operation to finish.",
-
   "Profiles.Title": "Profiles",
   "Profiles.SummaryFormat": "{0} profiles, {1} enabled",
   "Profiles.ActiveWindow": "Active Window",
@@ -397,7 +392,6 @@
   "Profiles.Delete": "Delete",
   "Profiles.NoProfile": "No Profile",
   "Profiles.NewProfileName": "New Profile",
-
   "History.Title": "History",
   "History.Search": "Search",
   "History.App": "App",
@@ -405,7 +399,7 @@
   "History.ClearAll": "Clear All",
   "History.Entries": " entries,",
   "History.Words": " words",
-  "History.Loading": "Loading history\u2026",
+  "History.Loading": "Loading history…",
   "History.NoRecordings": "No recordings yet",
   "History.CorrectionsDetected": "Corrections detected",
   "History.AddToDictionary": "Add to Dictionary",
@@ -425,7 +419,6 @@
   "History.ThisWeek": "This Week",
   "History.LastWeek": "Last Week",
   "History.ExportFileFilter": "Text (*.txt)|*.txt|CSV (*.csv)|*.csv|Markdown (*.md)|*.md|JSON (*.json)|*.json",
-
   "Plugins.Title": "Extensions",
   "Plugins.Subtitle": "Plugins extend TypeWhisper with additional transcription engines, AI providers, and post-processing.",
   "Plugins.InstalledSummaryFormat": "{0} installed, {1} enabled",
@@ -518,7 +511,6 @@
   "Plugins.InvalidPath": "The plugin package path is invalid.",
   "Plugins.PathOutsideRoot": "The plugin package path resolves outside the expected folder.",
   "Plugins.InvalidId": "The plugin ID is invalid.",
-
   "Dictionary.Title": "Dictionary",
   "Dictionary.BoostingToggle": "Enable vocabulary boosting",
   "Dictionary.BoostingHint": "Improves recognition of active dictionary terms and packs for local transcriptions",
@@ -534,7 +526,7 @@
   "Dictionary.OriginalPlaceholder": "Enter original...",
   "Dictionary.Correction": "Correction",
   "Dictionary.Term": "Term",
-  "Dictionary.ReplacementPlaceholder": "Replacement (optional)",
+  "Dictionary.ReplacementPlaceholder": "Replacement (e.g. \\n for new line, optional)",
   "Dictionary.Add": "Add",
   "Dictionary.AddAlias": "Add alias",
   "Dictionary.ToggleAliases": "Expand or collapse aliases",
@@ -602,12 +594,11 @@
   "Dictionary.TrainingReviewHint": "These variants came from {0} / {1}. Edit or deselect them before saving.",
   "Dictionary.TrainingRawTranscript": "Raw transcript",
   "Dictionary.TrainingNoCandidates": "No safe correction variants were found. Only the term will be added.",
-  "Dictionary.TrainingApproveCandidateFormat": "Include variant \u201c{0}\u201d",
+  "Dictionary.TrainingApproveCandidateFormat": "Include variant “{0}”",
   "Dictionary.TrainingInvalidCandidate": "This is not a valid correction variant.",
   "Dictionary.TrainingDuplicateCandidate": "This variant appears more than once.",
   "Dictionary.TrainingAlreadyExists": "This correction already exists and will be skipped.",
   "Dictionary.TrainingConflictFormat": "Conflict: this variant already points to “{0}” and will not be overwritten.",
-
   "Prompts.Title": "Prompts",
   "Prompts.Subtitle": "AI prompts for the Prompt Palette. Select text + hotkey = AI processes the text.",
   "Prompts.SummaryFormat": "{0} prompts, {1} enabled",
@@ -632,7 +623,6 @@
   "Prompts.ContextDelete": "Delete",
   "Prompts.DeleteConfirm": "Really delete prompt \"{0}\"?",
   "Prompts.DeleteTitle": "Delete Prompt",
-
   "Snippets.Title": "Snippets",
   "Snippets.Subtitle": "Placeholders: {date}, {time}, {datetime}, {day}, {year}, {clipboard}, {date:FORMAT}",
   "Snippets.SummaryFormat": "{0} snippets, {1} enabled",
@@ -653,13 +643,12 @@
   "Snippets.JsonFilter": "JSON Files (*.json)|*.json",
   "Snippets.ImportedFormat": "{0} snippet(s) imported.",
   "Snippets.ImportTitle": "Import",
-
   "Dashboard.Title": "Dashboard",
   "Dashboard.Week": "Week",
   "Dashboard.Weekly": "Weekly",
   "Dashboard.Month": "Month",
   "Dashboard.Words": "Words",
-  "Dashboard.AvgWpm": "\u00D8 WPM",
+  "Dashboard.AvgWpm": "Ø WPM",
   "Dashboard.Apps": "Apps",
   "Dashboard.TimeSaved": "Saved",
   "Dashboard.Activity": "Activity",
@@ -994,7 +983,6 @@
   "Recorder.SystemAudioOutputDefault": "Default output",
   "Recorder.SystemAudioOutputMissingFormat": "Missing output ({0})",
   "Recorder.InvalidOutputFileName": "Recorder output file name is invalid.",
-
   "Info.Subtitle": "Speech-to-text for your Windows desktop",
   "Info.Version": "Version",
   "Info.VersionFormat": "Version {0}",
@@ -1013,7 +1001,6 @@
   "Info.ClearErrors": "Clear",
   "Info.NoErrors": "No errors recorded.",
   "Info.DiagnosticsJsonFilter": "JSON files (*.json)|*.json",
-
   "Status.Ready": "Ready",
   "Status.Recording": "Recording...",
   "Status.RecordingToggle": "Recording (Toggle) - press hotkey to stop",
@@ -1044,12 +1031,11 @@
   "WorkflowPalette.Empty": "No matching workflows",
   "WorkflowPalette.NoManualWorkflows": "No manual workflows available",
   "WorkflowPalette.NoText": "No selected text or clipboard text available",
-
-  "Update.Checking": "Checking for updates\u2026",
+  "Update.Checking": "Checking for updates…",
   "Update.Check": "Check for Updates",
   "Update.UpToDate": "You are using the latest version.",
   "Update.AvailableFormat": "Version {0} available!",
-  "Update.Downloading": "Downloading update\u2026",
+  "Update.Downloading": "Downloading update…",
   "Update.Failed": "Update failed. Please try again.",
   "Update.NoUpdate": "No Update",
   "Update.NoUpdateMessage": "You already have the latest version.",
@@ -1060,7 +1046,6 @@
   "Update.ChannelReleaseCandidateDescription": "Release Candidate follows RC preview builds.",
   "Update.ChannelDailyDescription": "Daily follows the latest daily preview builds.",
   "Update.ChannelChangedFormat": "Update channel set to {0}.",
-
   "Tray.Settings": "Settings...",
   "Tray.TranscribeFile": "Transcribe file...",
   "Tray.RecentTranscriptions": "Recent Transcriptions...",
@@ -1069,7 +1054,6 @@
   "Tray.ReadBackLast": "Read back last transcription",
   "Tray.CheckUpdates": "Check for updates...",
   "Tray.Exit": "Exit",
-
   "FileTranscription.Title": "TypeWhisper - File Transcription",
   "FileTranscription.DragHint": "Drag audio/video files here",
   "FileTranscription.Or": "or",
@@ -1100,7 +1084,6 @@
   "FileTranscription.ExportedFormat": "Exported: {0}",
   "FileTranscription.SubtitleUnavailable": "Subtitle export requires timestamped segments from the selected model.",
   "FileTranscription.FileDialogFilter": "Audio/Video|*.wav;*.mp3;*.m4a;*.aac;*.ogg;*.flac;*.wma;*.mp4;*.mkv;*.avi;*.mov;*.webm|All Files|*.*",
-
   "WatchFolder.Title": "Watch folder",
   "WatchFolder.WatchFolder": "Watch folder",
   "WatchFolder.OutputFolder": "Output folder",
@@ -1133,7 +1116,6 @@
   "WatchFolder.OptionsUnavailable": "Watch folder options are not available.",
   "WatchFolder.TranscriberUnavailable": "The watch folder transcription service is not available.",
   "WatchFolder.FileStillWriting": "The watch folder file is still being written.",
-
   "SnippetEditor.Title": "Edit Snippet",
   "SnippetEditor.NewTitle": "New snippet",
   "SnippetEditor.EditTitle": "Edit snippet",
@@ -1149,7 +1131,6 @@
   "SnippetEditor.TagsHint": "Optional, for example email, support, or german.",
   "SnippetEditor.Cancel": "Cancel",
   "SnippetEditor.Save": "Save",
-
   "Welcome.Title": "Welcome to TypeWhisper",
   "Welcome.Subtitle": "Speech-to-Text Transcription",
   "Welcome.Back": "Back",
@@ -1213,7 +1194,6 @@
   "Welcome.AllSet": "All set!",
   "Welcome.AllSetDesc": "TypeWhisper is ready to use in any app.",
   "Welcome.GetStarted": "Get Started",
-
   "Widget.None": "None",
   "Widget.Indicator": "Status LED",
   "Widget.Timer": "Timer",
@@ -1223,34 +1203,27 @@
   "Widget.Workflow": "Workflow",
   "Widget.HotkeyMode": "Hotkey Mode",
   "Widget.AppName": "App Name",
-
   "Microphone.Default": "Default",
   "Microphone.Disconnected": "Selected microphone disconnected",
   "Microphone.AddPriorityItem": "Add microphone to priority list",
   "Microphone.DragPriorityItem": "Reorder microphone priority",
   "Microphone.RemovePriorityItem": "Remove microphone from priority list",
-
   "App.ErrorTitle": "TypeWhisper - Error",
   "App.ErrorFormat": "An error occurred:\n{0}",
   "App.UserDataMigrationErrorFormat": "TypeWhisper could not move its user data outside the application directory. No data was deleted.\n\n{0}",
-
   "Hotkey.Placeholder": "Press key combination...",
   "Hotkey.ClickToAssign": "Click to assign",
   "Hotkey.Clear": "Clear",
   "Hotkey.ModifierOnlyHint": "Modifier-only shortcuts trigger on release and stay available in longer key combinations. Win alone is reserved, and modifier-only shortcuts cannot be used for hold-only dictation.",
-
   "PromptPalette.NoActions": "No actions found",
-
   "Profiles.NoAssignment": "No assignment",
   "Profiles.GlobalDefault": "Global (Default)",
-
   "History.ShowMore": "Show more",
   "History.ShowLess": "Less",
-  "History.ExportHeader": "TypeWhisper \u2014 Transcription History",
+  "History.ExportHeader": "TypeWhisper — Transcription History",
   "History.ExportDateFormat": "Exported: {0:dd.MM.yyyy HH:mm}",
   "History.ExportEntryCount": "Entries: {0}",
   "History.CsvHeader": "Timestamp,App,Text,Duration (s),Words,Language",
-
   "Models.StatusLoading": "Loading...",
   "Models.StatusRemoving": "Removing...",
   "Models.StatusReady": "Ready",
@@ -1258,11 +1231,9 @@
   "Models.StatusDownloaded": "Downloaded",
   "Models.StatusApiKeyRequired": "API key required",
   "Models.LoadingModel": "Loading model...",
-
   "Welcome.DownloadProgress": "Downloading...",
   "Welcome.LoadingModel": "Loading model...",
   "Welcome.Done": "Done!",
-
   "Prompts.DefaultProviderLabel": "(Default)",
   "Prompts.DefaultProviderLabelNone": "Default AI provider: none configured",
   "Prompts.DefaultProviderLabelFormat": "Default AI provider: {0}",
@@ -1270,7 +1241,6 @@
   "Prompts.NewPromptTitle": "New Prompt",
   "Prompts.EditPromptTitle": "Edit Prompt",
   "Prompts.EditorSubtitle": "Keep prompts focused and reusable. You can change ordering later from the list.",
-
   "Workflows.Title": "Workflows",
   "Workflows.Subtitle": "Create app, website, and hotkey-triggered automation from one surface.",
   "Workflows.SummaryFormat": "{0} workflows, {1} enabled",
@@ -1396,15 +1366,12 @@
   "Workflows.ValidationHotkeyWorkflowConflictFormat": "{0} is already used by workflow \"{1}\".",
   "Workflows.ValidationHotkeyAppConflictFormat": "{0} is already used by {1}.",
   "Workflows.ValidationTranslation": "Translation workflows need a target language.",
-
   "Update.BalloonTitle": "Update available",
   "Update.BalloonMessage": "Version {0} is available. Click here to update.",
   "Update.BalloonFailedTitle": "Update failed",
   "Update.BalloonFailedMessage": "The update could not be installed. Please try again later.",
-
   "Translation.GlobalSetting": "Global Setting",
   "Translation.None": "No Translation",
-
   "Error.NoLlmProvider": "No AI provider available. Configure a local or cloud provider in Integrations.",
   "Error.SelectedLlmProviderMissing": "The selected AI provider is no longer installed: {0}. Choose another provider in Workflows.",
   "Error.SelectedLlmProviderUnavailable": "The selected AI provider is not ready: {0}. Check its login and configuration in Integrations.",
@@ -1414,8 +1381,7 @@
   "Error.FileNotFound": "File not found.",
   "Error.TranslationNotAvailableFormat": "No translation available for {0}->{1}",
   "Error.NoActiveTranscriptionEngine": "No active transcription engine",
-
-  "Export.Header": "TypeWhisper \u2014 Transcription History",
+  "Export.Header": "TypeWhisper — Transcription History",
   "Export.Exported": "Exported",
   "Export.Entries": "Entries",
   "Export.Timestamp": "Timestamp",
@@ -1424,14 +1390,12 @@
   "Export.Duration": "Duration (s)",
   "Export.Words": "Words",
   "Export.Language": "Language",
-
   "Api.NetworkErrorFormat": "Network error: {0}",
   "Api.Timeout": "API request timed out.",
   "Api.InvalidApiKey": "Invalid API key",
   "Api.AudioTooLarge": "Audio too large (max 25 MB)",
   "Api.RateLimitReached": "Rate limit reached, please wait",
   "Api.ErrorFormat": "API error {0}: {1}",
-
   "Dictionary.ReplacementEscapesHint": "Replacement escapes: \\s space, \\n line break, \\r carriage return, \\t tab, \\\\ backslash. Matching is literal unless Regular expression is enabled.",
   "Dictionary.Regex": "Regular expression",
   "Dictionary.InvalidRegexFormat": "Invalid regular expression: {0}",
