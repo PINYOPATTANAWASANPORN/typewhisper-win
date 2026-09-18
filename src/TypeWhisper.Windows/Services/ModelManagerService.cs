@@ -337,7 +337,7 @@ public sealed class ModelManagerService : INotifyPropertyChanged, IDisposable
         {
             await UnloadActivePluginForSwitchAsync(plugin);
 
-            var accelerationPreference = GetAccelerationPreference(_settings.Current.LocalModelAcceleration);
+            var accelerationPreference = GetEffectiveAccelerationPreference(plugin, _settings.Current.LocalModelAcceleration);
             plugin.SetAccelerationPreference(accelerationPreference);
 
             if (plugin.SupportsModelDownload)
@@ -416,6 +416,36 @@ public sealed class ModelManagerService : INotifyPropertyChanged, IDisposable
             AppSettings.LocalModelAccelerationAmdRocm => TranscriptionAccelerationPreference.AmdRocm,
             _ => TranscriptionAccelerationPreference.Auto
         };
+
+    internal static TranscriptionAccelerationPreference GetEffectiveAccelerationPreference(
+        ITranscriptionEnginePlugin? plugin,
+        string? normalizedPreferenceValue)
+    {
+        var requested = GetAccelerationPreference(normalizedPreferenceValue);
+        if (requested == TranscriptionAccelerationPreference.Auto)
+            return TranscriptionAccelerationPreference.Auto;
+
+        if (plugin is null)
+            return requested;
+
+        var supported = plugin.SupportedAccelerationBackends;
+        if (supported is null || supported.Count == 0)
+            supported = [TranscriptionAccelerationBackend.Cpu];
+
+        var requestedBackend = requested switch
+        {
+            TranscriptionAccelerationPreference.Cpu => TranscriptionAccelerationBackend.Cpu,
+            TranscriptionAccelerationPreference.NvidiaCuda => TranscriptionAccelerationBackend.NvidiaCuda,
+            TranscriptionAccelerationPreference.AmdVulkan => TranscriptionAccelerationBackend.AmdVulkan,
+            TranscriptionAccelerationPreference.AmdRocm => TranscriptionAccelerationBackend.AmdRocm,
+            _ => (TranscriptionAccelerationBackend?)null,
+        };
+
+        if (requestedBackend is not null && !supported.Contains(requestedBackend.Value))
+            return TranscriptionAccelerationPreference.Auto;
+
+        return requested;
+    }
 
     /// <summary>
     /// Unloads the active transcription model from memory.

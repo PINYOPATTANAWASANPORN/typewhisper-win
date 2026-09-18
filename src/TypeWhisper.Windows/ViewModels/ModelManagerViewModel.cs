@@ -297,7 +297,7 @@ public partial class ModelManagerViewModel : ObservableObject
             var plugin = GetDisplayTranscriptionPlugin();
             if (plugin is not null && ShouldShowAccelerationSection(plugin))
             {
-                var effectivePreference = GetEffectiveAccelerationPreference(plugin, normalized);
+                var effectivePreference = ModelManagerService.GetEffectiveAccelerationPreference(plugin, normalized);
                 plugin.SetAccelerationPreference(effectivePreference);
             }
 
@@ -493,33 +493,8 @@ public partial class ModelManagerViewModel : ObservableObject
 
     internal static TranscriptionAccelerationPreference GetEffectiveAccelerationPreference(
         ITranscriptionEnginePlugin? plugin,
-        string? normalizedPreferenceValue)
-    {
-        var requested = ModelManagerService.GetAccelerationPreference(normalizedPreferenceValue);
-        if (requested == TranscriptionAccelerationPreference.Auto)
-            return TranscriptionAccelerationPreference.Auto;
-
-        if (plugin is null)
-            return requested;
-
-        var supported = plugin.SupportedAccelerationBackends;
-        if (supported is null || supported.Count == 0)
-            return requested;
-
-        var requestedBackend = requested switch
-        {
-            TranscriptionAccelerationPreference.Cpu => TranscriptionAccelerationBackend.Cpu,
-            TranscriptionAccelerationPreference.NvidiaCuda => TranscriptionAccelerationBackend.NvidiaCuda,
-            TranscriptionAccelerationPreference.AmdVulkan => TranscriptionAccelerationBackend.AmdVulkan,
-            TranscriptionAccelerationPreference.AmdRocm => TranscriptionAccelerationBackend.AmdRocm,
-            _ => (TranscriptionAccelerationBackend?)null,
-        };
-
-        if (requestedBackend is not null && !supported.Contains(requestedBackend.Value))
-            return TranscriptionAccelerationPreference.Auto;
-
-        return requested;
-    }
+        string? normalizedPreferenceValue) =>
+        ModelManagerService.GetEffectiveAccelerationPreference(plugin, normalizedPreferenceValue);
 
     private static void InvokeOnUiThread(Action action)
     {

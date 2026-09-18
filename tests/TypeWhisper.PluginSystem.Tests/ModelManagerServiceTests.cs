@@ -996,6 +996,32 @@ public class ModelManagerServiceTests
         Assert.Equal("Alpha, Beta", plugin.LastPrompt);
     }
 
+    [Fact]
+    public async Task LoadModelAsync_FallsBackToAuto_WhenPersistedPreferenceNotSupportedByEngine()
+    {
+        const string pluginId = "com.typewhisper.sherpa-onnx";
+        const string modelId = "parakeet";
+        var fullModelId = ModelManagerService.GetPluginModelId(pluginId, modelId);
+
+        _settings.Setup(s => s.Current).Returns(new AppSettings
+        {
+            LocalModelAcceleration = AppSettings.LocalModelAccelerationAmdVulkan
+        });
+
+        var plugin = new FakeTranscriptionPlugin(
+            pluginId,
+            configured: true,
+            selectedModelId: null,
+            supportsModelDownload: true);
+        var pluginManager = CreatePluginManager(plugin);
+        var sut = new ModelManagerService(pluginManager, _settings.Object);
+
+        await sut.LoadModelAsync(fullModelId);
+
+        Assert.Equal(TranscriptionAccelerationPreference.Auto, plugin.LastAccelerationPreference);
+        Assert.Equal(TranscriptionAccelerationPreference.Auto, plugin.AccelerationPreferenceAtLoad);
+    }
+
     private PluginManager CreatePluginManager(params ITranscriptionEnginePlugin[] transcriptionEngines)
     {
         var pluginManager = new PluginManager(

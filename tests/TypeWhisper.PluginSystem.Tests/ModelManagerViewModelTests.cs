@@ -1843,7 +1843,7 @@ public class ModelManagerViewModelTests
         var settings = new FakeSettingsService(new AppSettings
         {
             SelectedModelId = fullModelId,
-            LocalModelAcceleration = AppSettings.LocalModelAccelerationAmdVulkan
+            LocalModelAcceleration = AppSettings.LocalModelAccelerationAuto
         });
 
         var plugin = new FakeTranscriptionPlugin(
@@ -1866,6 +1866,37 @@ public class ModelManagerViewModelTests
 
         Assert.Equal(TranscriptionAccelerationPreference.Auto, plugin.LastAccelerationPreference);
         Assert.Equal(AppSettings.LocalModelAccelerationAmdVulkan, settings.Current.LocalModelAcceleration);
+    }
+
+    [Fact]
+    public void SelectedAccelerationOptionValue_TreatsEmptyCapabilitiesAsCpuOnly()
+    {
+        const string pluginId = "com.typewhisper.cpu-only";
+        const string modelId = "local-cpu";
+        var fullModelId = ModelManagerService.GetPluginModelId(pluginId, modelId);
+        var settings = new FakeSettingsService(new AppSettings
+        {
+            SelectedModelId = fullModelId,
+            LocalModelAcceleration = AppSettings.LocalModelAccelerationAuto
+        });
+
+        var plugin = new FakeTranscriptionPlugin(
+            pluginId,
+            "CPU Only Engine",
+            modelId,
+            "CPU Model",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: []);
+
+        var pluginManager = CreatePluginManager(settings, plugin);
+        var modelManager = new ModelManagerService(pluginManager, settings);
+        var sut = new ModelManagerViewModel(modelManager, settings);
+
+        sut.SelectedAccelerationOptionValue = AppSettings.LocalModelAccelerationNvidiaCuda;
+
+        Assert.Equal(TranscriptionAccelerationPreference.Auto, plugin.LastAccelerationPreference);
+        Assert.Equal(AppSettings.LocalModelAccelerationNvidiaCuda, settings.Current.LocalModelAcceleration);
     }
 
     private PluginManager CreatePluginManager(ISettingsService settings, params ITranscriptionEnginePlugin[] transcriptionEngines)
