@@ -526,7 +526,7 @@
   "Dictionary.OriginalPlaceholder": "Enter original...",
   "Dictionary.Correction": "Correction",
   "Dictionary.Term": "Term",
-  "Dictionary.ReplacementPlaceholder": "Replacement (e.g. \\n for new line, optional)",
+  "Dictionary.ReplacementPlaceholder": "Replacement (supports \\n, \\r, \\t, optional)",
   "Dictionary.Add": "Add",
   "Dictionary.AddAlias": "Add alias",
   "Dictionary.ToggleAliases": "Expand or collapse aliases",
@@ -1428,6 +1428,5 @@
   "SpokenFormatting.KeepAutomatic": "Use Automatic",
   "SpokenFormatting.UseFallback": "Use Fallback",
   "SpokenFormatting.NativeWorks": "Native Works",
-  "SpokenFormatting.Cancel": "Cancel",
-  "DictionaryReplacementPlaceholder": "Replacement text (e.g. text\\n\\n, supports \\n, \\t, \\r)"
+  "SpokenFormatting.Cancel": "Cancel"
 }

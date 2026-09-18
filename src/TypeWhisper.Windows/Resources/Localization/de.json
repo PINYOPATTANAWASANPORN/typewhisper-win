@@ -526,7 +526,7 @@
   "Dictionary.OriginalPlaceholder": "Original eingeben...",
   "Dictionary.Correction": "Korrektur",
   "Dictionary.Term": "Begriff",
-  "Dictionary.ReplacementPlaceholder": "Ersetzung (z. B. \\n für neue Zeile, optional)",
+  "Dictionary.ReplacementPlaceholder": "Ersetzung (unterstützt \\n, \\r, \\t, optional)",
   "Dictionary.Add": "Hinzufügen",
   "Dictionary.AddAlias": "Alias hinzufügen",
   "Dictionary.ToggleAliases": "Aliase ein- oder ausklappen",
@@ -1428,6 +1428,5 @@
   "SpokenFormatting.KeepAutomatic": "Automatisch verwenden",
   "SpokenFormatting.UseFallback": "Fallback verwenden",
   "SpokenFormatting.NativeWorks": "Nativ funktioniert",
-  "SpokenFormatting.Cancel": "Abbrechen",
-  "DictionaryReplacementPlaceholder": "Ersetzungstext (z. B. text\\n\\n, unterstützt \\n, \\t, \\r)"
+  "SpokenFormatting.Cancel": "Abbrechen"
 }
