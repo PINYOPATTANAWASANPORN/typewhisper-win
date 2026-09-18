@@ -1428,5 +1428,6 @@
   "SpokenFormatting.KeepAutomatic": "Use Automatic",
   "SpokenFormatting.UseFallback": "Use Fallback",
   "SpokenFormatting.NativeWorks": "Native Works",
-  "SpokenFormatting.Cancel": "Cancel"
+  "SpokenFormatting.Cancel": "Cancel",
+  "DictionaryReplacementPlaceholder": "Replacement text (e.g. text\\n\\n, supports \\n, \\t, \\r)"
 }
