@@ -128,9 +128,6 @@ public class ModelManagerViewModelTests
         Assert.Equal(AppSettings.LocalModelAccelerationNvidiaCuda, sut.SelectedAccelerationOptionValue);
         Assert.Contains(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAuto);
         Assert.Contains(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationCpu);
-        Assert.Contains(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationNvidiaCuda);
-        Assert.Contains(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdVulkan);
-        Assert.Contains(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdRocm);
     }
 
     [Fact]
@@ -1660,6 +1657,215 @@ public class ModelManagerViewModelTests
         var dataLength = BitConverter.ToInt32(wavAudio, dataOffset - sizeof(int));
         Assert.True(dataLength >= expectedInitialBytes);
         Assert.Contains(wavAudio.AsSpan(dataOffset, expectedInitialBytes).ToArray(), value => value != 0);
+    }
+
+    [Fact]
+    public void AccelerationOptions_FiltersBySelectedEngineCapabilities()
+    {
+        const string pluginId = "com.typewhisper.legacy-plugin";
+        const string modelId = "legacy-model";
+        var fullModelId = ModelManagerService.GetPluginModelId(pluginId, modelId);
+        var settings = new FakeSettingsService(new AppSettings
+        {
+            SelectedModelId = fullModelId
+        });
+
+        var plugin = new FakeTranscriptionPlugin(
+            pluginId,
+            "Legacy Engine",
+            modelId,
+            "Legacy Model",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: [
+                TranscriptionAccelerationBackend.Cpu,
+                TranscriptionAccelerationBackend.NvidiaCuda
+            ]);
+
+        var pluginManager = CreatePluginManager(settings, plugin);
+        var modelManager = new ModelManagerService(pluginManager, settings);
+        var sut = new ModelManagerViewModel(modelManager, settings);
+
+        var optionValues = sut.AccelerationOptions.Select(o => o.Value).ToList();
+        Assert.Equal(
+            [
+                AppSettings.LocalModelAccelerationAuto,
+                AppSettings.LocalModelAccelerationCpu,
+                AppSettings.LocalModelAccelerationNvidiaCuda
+            ],
+            optionValues);
+        Assert.DoesNotContain(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdVulkan);
+        Assert.DoesNotContain(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdRocm);
+    }
+
+    [Fact]
+    public void AccelerationOptions_ExposesAmdChoices_WhenEngineAdvertisesThem()
+    {
+        const string pluginId = "com.typewhisper.whisper-cpp";
+        const string modelId = "ggml-medium";
+        var fullModelId = ModelManagerService.GetPluginModelId(pluginId, modelId);
+        var settings = new FakeSettingsService(new AppSettings
+        {
+            SelectedModelId = fullModelId
+        });
+
+        var plugin = new FakeTranscriptionPlugin(
+            pluginId,
+            "Whisper.cpp",
+            modelId,
+            "Medium Model",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: [
+                TranscriptionAccelerationBackend.Cpu,
+                TranscriptionAccelerationBackend.NvidiaCuda,
+                TranscriptionAccelerationBackend.AmdVulkan,
+                TranscriptionAccelerationBackend.AmdRocm
+            ]);
+
+        var pluginManager = CreatePluginManager(settings, plugin);
+        var modelManager = new ModelManagerService(pluginManager, settings);
+        var sut = new ModelManagerViewModel(modelManager, settings);
+
+        var optionValues = sut.AccelerationOptions.Select(o => o.Value).ToList();
+        Assert.Equal(
+            [
+                AppSettings.LocalModelAccelerationAuto,
+                AppSettings.LocalModelAccelerationCpu,
+                AppSettings.LocalModelAccelerationNvidiaCuda,
+                AppSettings.LocalModelAccelerationAmdVulkan,
+                AppSettings.LocalModelAccelerationAmdRocm
+            ],
+            optionValues);
+    }
+
+    [Fact]
+    public void AccelerationOptions_HidesAmdChoices_ForSherpaOnnxParakeet()
+    {
+        const string pluginId = "com.typewhisper.sherpa-onnx";
+        const string modelId = "parakeet";
+        var fullModelId = ModelManagerService.GetPluginModelId(pluginId, modelId);
+        var settings = new FakeSettingsService(new AppSettings
+        {
+            SelectedModelId = fullModelId
+        });
+
+        var plugin = new FakeTranscriptionPlugin(
+            pluginId,
+            "Sherpa Onnx",
+            modelId,
+            "Parakeet",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: [
+                TranscriptionAccelerationBackend.Cpu,
+                TranscriptionAccelerationBackend.NvidiaCuda
+            ]);
+
+        var pluginManager = CreatePluginManager(settings, plugin);
+        var modelManager = new ModelManagerService(pluginManager, settings);
+        var sut = new ModelManagerViewModel(modelManager, settings);
+
+        var optionValues = sut.AccelerationOptions.Select(o => o.Value).ToList();
+        Assert.Equal(
+            [
+                AppSettings.LocalModelAccelerationAuto,
+                AppSettings.LocalModelAccelerationCpu,
+                AppSettings.LocalModelAccelerationNvidiaCuda
+            ],
+            optionValues);
+        Assert.DoesNotContain(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdVulkan);
+        Assert.DoesNotContain(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdRocm);
+    }
+
+    [Fact]
+    public void AccelerationOptions_RefreshesWhenSelectedModelOptionChanges()
+    {
+        const string pluginAId = "com.typewhisper.whisper-cpp";
+        const string modelAId = "ggml-base";
+        var fullModelAId = ModelManagerService.GetPluginModelId(pluginAId, modelAId);
+
+        const string pluginBId = "com.typewhisper.sherpa-onnx";
+        const string modelBId = "parakeet";
+        var fullModelBId = ModelManagerService.GetPluginModelId(pluginBId, modelBId);
+
+        var settings = new FakeSettingsService(new AppSettings
+        {
+            SelectedModelId = fullModelAId
+        });
+
+        var pluginA = new FakeTranscriptionPlugin(
+            pluginAId,
+            "Whisper.cpp",
+            modelAId,
+            "Base",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: [
+                TranscriptionAccelerationBackend.Cpu,
+                TranscriptionAccelerationBackend.NvidiaCuda,
+                TranscriptionAccelerationBackend.AmdVulkan
+            ]);
+
+        var pluginB = new FakeTranscriptionPlugin(
+            pluginBId,
+            "Sherpa Onnx",
+            modelBId,
+            "Parakeet",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: [
+                TranscriptionAccelerationBackend.Cpu
+            ]);
+
+        var pluginManager = CreatePluginManager(settings, pluginA, pluginB);
+        var modelManager = new ModelManagerService(pluginManager, settings);
+        var sut = new ModelManagerViewModel(modelManager, settings);
+
+        Assert.Contains(sut.AccelerationOptions, o => o.Value == AppSettings.LocalModelAccelerationAmdVulkan);
+
+        sut.SelectedModelOptionId = fullModelBId;
+
+        Assert.Equal(
+            [
+                AppSettings.LocalModelAccelerationAuto,
+                AppSettings.LocalModelAccelerationCpu
+            ],
+            sut.AccelerationOptions.Select(o => o.Value).ToList());
+    }
+
+    [Fact]
+    public void SelectedAccelerationOptionValue_DoesNotSendUnsupportedBackendToEngine()
+    {
+        const string pluginId = "com.typewhisper.sherpa-onnx";
+        const string modelId = "parakeet";
+        var fullModelId = ModelManagerService.GetPluginModelId(pluginId, modelId);
+        var settings = new FakeSettingsService(new AppSettings
+        {
+            SelectedModelId = fullModelId,
+            LocalModelAcceleration = AppSettings.LocalModelAccelerationAmdVulkan
+        });
+
+        var plugin = new FakeTranscriptionPlugin(
+            pluginId,
+            "Sherpa Onnx",
+            modelId,
+            "Parakeet",
+            configured: true,
+            supportsModelDownload: true,
+            supportedAccelerationBackends: [
+                TranscriptionAccelerationBackend.Cpu,
+                TranscriptionAccelerationBackend.NvidiaCuda
+            ]);
+
+        var pluginManager = CreatePluginManager(settings, plugin);
+        var modelManager = new ModelManagerService(pluginManager, settings);
+        var sut = new ModelManagerViewModel(modelManager, settings);
+
+        sut.SelectedAccelerationOptionValue = AppSettings.LocalModelAccelerationAmdVulkan;
+
+        Assert.Equal(TranscriptionAccelerationPreference.Auto, plugin.LastAccelerationPreference);
+        Assert.Equal(AppSettings.LocalModelAccelerationAmdVulkan, settings.Current.LocalModelAcceleration);
     }
 
     private PluginManager CreatePluginManager(ISettingsService settings, params ITranscriptionEnginePlugin[] transcriptionEngines)

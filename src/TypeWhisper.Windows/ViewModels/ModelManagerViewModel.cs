@@ -146,7 +146,6 @@ public partial class ModelManagerViewModel : ObservableObject
         _selectedAccelerationOptionValue = AppSettings.NormalizeLocalModelAcceleration(
             _settings.Current.LocalModelAcceleration);
 
-        RefreshAccelerationOptions();
         RebuildProviders();
         RefreshModelStorage();
         PropertyChangedEventManager.AddHandler(Loc.Instance, OnLocalizationChanged, "Item[]");
@@ -298,8 +297,8 @@ public partial class ModelManagerViewModel : ObservableObject
             var plugin = GetDisplayTranscriptionPlugin();
             if (plugin is not null && ShouldShowAccelerationSection(plugin))
             {
-                plugin.SetAccelerationPreference(
-                    ModelManagerService.GetAccelerationPreference(normalized));
+                var effectivePreference = GetEffectiveAccelerationPreference(plugin, normalized);
+                plugin.SetAccelerationPreference(effectivePreference);
             }
 
             var displayModelId = GetDisplayModelId();
@@ -435,24 +434,91 @@ public partial class ModelManagerViewModel : ObservableObject
 
     private void RefreshAccelerationOptions()
     {
-        (string Value, string DisplayName)[] localizedOptions =
+        var plugin = GetDisplayTranscriptionPlugin();
+        var supportedBackends = plugin?.SupportedAccelerationBackends;
+
+        var availableBackends = (supportedBackends is { Count: > 0 } backends
+            ? backends
+            : [TranscriptionAccelerationBackend.Cpu]).ToHashSet();
+
+        List<(string Value, string DisplayName)> localizedOptions =
         [
             (AppSettings.LocalModelAccelerationAuto, Loc.Instance["Models.AccelerationAuto"]),
-            (AppSettings.LocalModelAccelerationCpu, Loc.Instance["Models.AccelerationCpu"]),
-            (AppSettings.LocalModelAccelerationNvidiaCuda, Loc.Instance["Models.AccelerationNvidiaCuda"]),
-            (AppSettings.LocalModelAccelerationAmdVulkan, Loc.Instance["Models.AccelerationAmdVulkan"]),
-            (AppSettings.LocalModelAccelerationAmdRocm, Loc.Instance["Models.AccelerationAmdRocm"]),
         ];
 
-        foreach (var localizedOption in localizedOptions)
+        if (availableBackends.Contains(TranscriptionAccelerationBackend.Cpu))
+            localizedOptions.Add((AppSettings.LocalModelAccelerationCpu, Loc.Instance["Models.AccelerationCpu"]));
+
+        if (availableBackends.Contains(TranscriptionAccelerationBackend.NvidiaCuda))
+            localizedOptions.Add((AppSettings.LocalModelAccelerationNvidiaCuda, Loc.Instance["Models.AccelerationNvidiaCuda"]));
+
+        if (availableBackends.Contains(TranscriptionAccelerationBackend.AmdVulkan))
+            localizedOptions.Add((AppSettings.LocalModelAccelerationAmdVulkan, Loc.Instance["Models.AccelerationAmdVulkan"]));
+
+        if (availableBackends.Contains(TranscriptionAccelerationBackend.AmdRocm))
+            localizedOptions.Add((AppSettings.LocalModelAccelerationAmdRocm, Loc.Instance["Models.AccelerationAmdRocm"]));
+
+        for (var i = AccelerationOptions.Count - 1; i >= 0; i--)
         {
-            var existing = AccelerationOptions.FirstOrDefault(option =>
-                option.Value == localizedOption.Value);
-            if (existing is null)
-                AccelerationOptions.Add(new(localizedOption.Value, localizedOption.DisplayName));
-            else
-                existing.UpdateDisplayName(localizedOption.DisplayName);
+            var option = AccelerationOptions[i];
+            if (!localizedOptions.Any(o => o.Value == option.Value))
+                AccelerationOptions.RemoveAt(i);
         }
+
+        for (var i = 0; i < localizedOptions.Count; i++)
+        {
+            var (value, displayName) = localizedOptions[i];
+            var existingIndex = -1;
+            for (var j = 0; j < AccelerationOptions.Count; j++)
+            {
+                if (AccelerationOptions[j].Value == value)
+                {
+                    existingIndex = j;
+                    break;
+                }
+            }
+
+            if (existingIndex < 0)
+            {
+                AccelerationOptions.Insert(i, new(value, displayName));
+            }
+            else
+            {
+                AccelerationOptions[existingIndex].UpdateDisplayName(displayName);
+                if (existingIndex != i)
+                    AccelerationOptions.Move(existingIndex, i);
+            }
+        }
+    }
+
+    internal static TranscriptionAccelerationPreference GetEffectiveAccelerationPreference(
+        ITranscriptionEnginePlugin? plugin,
+        string? normalizedPreferenceValue)
+    {
+        var requested = ModelManagerService.GetAccelerationPreference(normalizedPreferenceValue);
+        if (requested == TranscriptionAccelerationPreference.Auto)
+            return TranscriptionAccelerationPreference.Auto;
+
+        if (plugin is null)
+            return requested;
+
+        var supported = plugin.SupportedAccelerationBackends;
+        if (supported is null || supported.Count == 0)
+            return requested;
+
+        var requestedBackend = requested switch
+        {
+            TranscriptionAccelerationPreference.Cpu => TranscriptionAccelerationBackend.Cpu,
+            TranscriptionAccelerationPreference.NvidiaCuda => TranscriptionAccelerationBackend.NvidiaCuda,
+            TranscriptionAccelerationPreference.AmdVulkan => TranscriptionAccelerationBackend.AmdVulkan,
+            TranscriptionAccelerationPreference.AmdRocm => TranscriptionAccelerationBackend.AmdRocm,
+            _ => (TranscriptionAccelerationBackend?)null,
+        };
+
+        if (requestedBackend is not null && !supported.Contains(requestedBackend.Value))
+            return TranscriptionAccelerationPreference.Auto;
+
+        return requested;
     }
 
     private static void InvokeOnUiThread(Action action)
@@ -496,6 +562,7 @@ public partial class ModelManagerViewModel : ObservableObject
             ActiveModelStatusText = "";
             IsActiveModelReady = false;
             IsActiveModelBusy = false;
+            RefreshAccelerationOptions();
             RefreshAccelerationStatus();
             return;
         }
@@ -505,6 +572,7 @@ public partial class ModelManagerViewModel : ObservableObject
         ActiveModelStatusText = activeModel.Model.StatusText;
         IsActiveModelReady = activeModel.Model.IsReady;
         IsActiveModelBusy = activeModel.Model.IsBusy;
+        RefreshAccelerationOptions();
         RefreshAccelerationStatus();
     }
 
